@@ -1,0 +1,110 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+    id 'maven-publish'
+    id 'org.springframework.boot' version '4.1.1'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.sonarqube' version '7.5.0.8588'
+}
+
+group = 'com.fds'
+version = '0.0.1-SNAPSHOT'
+description = 'template-service' //todo dont forget to change
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/FastDeliveryService/lib-security-starter")
+        credentials {
+            username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
+            password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+        }
+    }
+}
+
+dependencies {
+    implementation 'com.fds:security-spring-boot-starter:0.0.1-SNAPSHOT'
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'org.liquibase:liquibase-core'
+    compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'org.postgresql:postgresql'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+    testImplementation 'org.testcontainers:testcontainers-junit-jupiter'
+    testImplementation 'org.testcontainers:testcontainers-postgresql'
+    testCompileOnly 'org.projectlombok:lombok'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/FastDeliveryService/placeholder") //todo change to repo name
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+jacoco {
+    toolVersion = "0.8.15"
+    reportsDirectory = layout.buildDirectory.dir('./test-results/reports')
+}
+
+test {
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+sonar {
+    properties {
+        property "sonar.projectKey", "FastDeliveryService_template-service"  //todo important to change
+        property "sonar.organization", "fastdeliveryservice"
+        property "sonar.projectName", "FDS Template service" //todo important to change
+        property "sonar.coverage.jacoco.xmlReportPaths",
+                "${layout.buildDirectory.get()}/test-results/reports/test/jacocoTestReport.xml"
+    }
+}

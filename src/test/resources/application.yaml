@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: fds-security-starter
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${JWT_ISSUER:http://localhost:8080/realms/dummy}
