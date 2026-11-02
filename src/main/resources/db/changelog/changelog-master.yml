@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: releases/v1.0/20102026-create-users.yml
+      relativeToChangelogFile: true
+  - include:
+      file: releases/v1.0/21102026-create-delivery-addresses.yml
+      relativeToChangelogFile: true

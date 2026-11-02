@@ -9,7 +9,7 @@ plugins {
 
 group = 'com.fds'
 version = '0.0.1-SNAPSHOT'
-description = 'template-service' //todo dont forget to change
+description = 'user-service'
 
 java {
     toolchain {
@@ -35,14 +35,20 @@ dependencies {
     implementation 'com.fds:security-spring-boot-starter:0.0.1-SNAPSHOT'
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-liquibase'
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
-    implementation 'org.liquibase:liquibase-core'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.mapstruct:mapstruct:1.6.3'
+    implementation "org.keycloak:keycloak-admin-client:26.0.12"
+    implementation 'com.fasterxml.uuid:java-uuid-generator:5.2.0'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
     testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
     testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+    testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.testcontainers:testcontainers-junit-jupiter'
     testImplementation 'org.testcontainers:testcontainers-postgresql'
     testCompileOnly 'org.projectlombok:lombok'
@@ -68,7 +74,7 @@ publishing {
     repositories {
         maven {
             name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/FastDeliveryService/placeholder") //todo change to repo name
+            url = uri("https://maven.pkg.github.com/FastDeliveryService/user-service")
             credentials {
                 username = System.getenv("GITHUB_ACTOR")
                 password = System.getenv("GITHUB_TOKEN")
@@ -101,9 +107,9 @@ jacocoTestReport {
 
 sonar {
     properties {
-        property "sonar.projectKey", "FastDeliveryService_template-service"  //todo important to change
+        property "sonar.projectKey", "FastDeliveryService_user-service"
         property "sonar.organization", "fastdeliveryservice"
-        property "sonar.projectName", "FDS Template service" //todo important to change
+        property "sonar.projectName", "FDS User service"
         property "sonar.coverage.jacoco.xmlReportPaths",
                 "${layout.buildDirectory.get()}/test-results/reports/test/jacocoTestReport.xml"
     }

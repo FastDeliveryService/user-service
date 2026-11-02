@@ -1,0 +1,91 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_delivery_addresses
+      author: tabletka97
+      changes:
+        - createTable:
+            tableName: delivery_addresses
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: uuid
+                  constraints:
+                    foreignKeyName: fk_addresses_users
+                    referencedTableName: users
+                    referencedColumnNames: id
+                    nullable: false
+              - column:
+                  name: city
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: street
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: building
+                  type: varchar(10)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: apartment
+                  type: varchar(10)
+              - column:
+                  name: entrance
+                  type: varchar(10)
+              - column:
+                  name: floor
+                  type: varchar(10)
+              - column:
+                  name: latitude
+                  type: decimal(11, 8)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: longitude
+                  type: decimal(10, 8)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_default
+                  type: boolean
+                  defaultValueBoolean: false
+              - column:
+                  name: created_at
+                  type: timestamptz
+                  defaultValueComputed: now()
+              - column:
+                  name: updated_at
+                  type: timestamptz
+                  defaultValueComputed: now()
+              - column:
+                  name: active
+                  type: boolean
+                  defaultValueBoolean: true
+
+        - createIndex:
+            tableName: delivery_addresses
+            indexName: idx_delivery_address_user_id
+            columns:
+              - column:
+                  name: user_id
+
+        - sql:
+            dbms: postgresql
+            sql: >
+              CREATE UNIQUE INDEX idx_one_default_address_per_user
+              ON delivery_addresses(user_id)
+              WHERE is_default = TRUE;
+
+      rollback:
+        - sql:
+            sql: DROP INDEX IF EXISTS idx_one_default_address_per_user;

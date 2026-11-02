@@ -3,34 +3,34 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: fds-template-service
+    container_name: fds-user-service
     ports:
       - "8080:8080"
     environment:
       - SERVER_PORT=8080
-      - DB_URL=jdbc:postgresql://postgres-db:5432/template_db
+      - DB_URL=jdbc:postgresql://postgres-db:5432/user_db
       - DB_USERNAME=fds_user
       - DB_PASSWORD=fds_password
       - SPRING_PROFILES_ACTIVE=prod
     depends_on:
-      postgres-db:
+      user-postgres-db:
         condition: service_healthy
     networks:
       - fds-network
 
-  postgres-db:
+  user-postgres-db:
     image: postgres:15-alpine
     container_name: fds-postgres-db
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: template_db
+      POSTGRES_DB: user_db
       POSTGRES_USER: fds_user
       POSTGRES_PASSWORD: fds_password
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U fds_user -d template_db"]
+      test: ["CMD-SHELL", "pg_isready -U fds_user -d user_db"]
       interval: 5s
       timeout: 5s
       retries: 5

@@ -17,9 +17,9 @@ RUN ./gradlew bootJar --no-daemon
 FROM eclipse-temurin:25-jre-alpine
 WORKDIR /app
 RUN addgroup -S appuser && adduser -S appuser -G appuser
-COPY --from=builder /app/build/libs/*.jar template-service.jar
+COPY --from=builder /app/build/libs/*.jar user-service.jar
 
-RUN chown appuser:appuser template-service.jar
+RUN chown appuser:appuser user-service.jar
 USER appuser:appuser
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "user-service.jar"]
